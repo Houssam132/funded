@@ -1,0 +1,55 @@
+.homepage-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    background-color: white;
+    height: 500px; /* Adjust as needed */
+  }
+  
+  .text-section {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .text-section .since {
+    color: #ffd700;
+    letter-spacing: 3px;
+    font-weight: 700;
+  }
+  
+  .text-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  
+  .text-section h2 {
+    font-size: 2.5rem;
+    color: #f9c846;
+    font-style: italic;
+  }
+  
+  .text-section .description {
+    margin-top: 20px;
+    color: black;
+  }
+  
+  .image-section {
+    flex: 1;
+    overflow: hidden;
+    width: 500px;
+    height: 400px;
+  }
+  
+  .image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+  }
+  
+  

@@ -1,0 +1,60 @@
+.goals-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 2rem;
+    background-color: white;
+  }
+  
+  .goals-left {
+    flex: 1;
+    min-width: 300px;
+    max-width: 600px;
+   
+    padding: 1rem;
+  }
+  
+  .goals-left video {
+    width: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .goals-right {
+    flex: 1;
+    min-width: 300px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px var(--green);
+  }
+  
+  .goals-right h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--gold);
+  }
+  
+  .goals-right ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .goal-item {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    position: relative;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .goal-item::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: var(--gold); /* teal icon */
+  }
+  
