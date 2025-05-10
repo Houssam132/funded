@@ -5,6 +5,8 @@ import './projectpage.css';
 
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getAnalytics } from 'firebase/analytics';
+
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyC-vKa2rJkmdc8R8w4NpIKRYr6KKaoPrFk",
