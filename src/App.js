@@ -8,7 +8,6 @@ import Footer from './components/Footer/Footer'; // Import the Footer component
 import Adminpage from './Pages/AdminPage.js';
 import ProjectsPage from './Pages/projectpage/projectpage'; // Import the ProjectsPage component
 
-
 function HomePage() {
   return (
     <div className='App'>
