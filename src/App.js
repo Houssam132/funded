@@ -7,6 +7,9 @@ import Goals from './components/Goals/Goals'; // Import the Goals component
 import Footer from './components/Footer/Footer'; // Import the Footer component
 import Adminpage from './Pages/AdminPage.js';
 import ProjectsPage from './Pages/projectpage/projectpage'; // Import the ProjectsPage component
+import React, { useState } from 'react';
+import PublishProjectModal from './components/Projectadminform/PublishProjectModal.js'; // import it
+
 
 
 function HomePage() {
@@ -22,11 +25,17 @@ function HomePage() {
 }
 
 function AdminPage() {
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+
+  const handlePublishClick = () => {
+    setIsPublishModalOpen(true);
+};
   return (
     <div className='App'>
-      <Navbar isAdmin={true} />
+      <Navbar isAdmin={true} onPublishClick={handlePublishClick} />
       <Adminpage />
       <Footer />
+      <PublishProjectModal isOpen={isPublishModalOpen} onClose={() => setIsPublishModalOpen(false)} />
     </div>
   );
 }
