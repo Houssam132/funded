@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import './publishproject.css';
-
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-vKa2rJkmdc8R8w4NpIKRYr6KKaoPrFk",
@@ -17,7 +15,6 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const PublishProjectModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -28,7 +25,7 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
     risks: '',
     description: '',
     team: '',
-    image: '',
+    image: null, // Will store base64 encoded string
   });
 
   const [loading, setLoading] = useState(false);
@@ -36,10 +33,21 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData({ ...formData, image: files[0] });
+    
+    if (name === 'image' && files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          image: reader.result // This will be the base64 string
+        }));
+      };
+      
+      reader.readAsDataURL(file);
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -49,15 +57,8 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
     setError('');
 
     try {
-      let imageUrl = '';
-
-      if (formData.image instanceof File) {
-        const imageRef = ref(storage, `projectImages/${formData.image.name}`);
-        await uploadBytes(imageRef, formData.image);
-        imageUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.app.options.storageBucket}/o/${encodeURIComponent(imageRef.name)}?alt=media`;
-      }
-
-      await addDoc(collection(db, 'Project'), {
+      // Prepare the data to be saved
+      const projectData = {
         name: formData.name,
         field: formData.field,
         sponsorPrice: formData.sponsorPrice,
@@ -65,8 +66,15 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
         risks: formData.risks,
         description: formData.description,
         team: formData.team,
-        image: formData.image,
-      });
+        createdAt: new Date().toISOString(),
+      };
+
+      // Only add image if it exists
+      if (formData.image) {
+        projectData.image = formData.image;
+      }
+
+      await addDoc(collection(db, 'Project'), projectData);
 
       alert('Projet publié avec succès !');
       onClose();
@@ -89,11 +97,18 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
           <input name="name" type="text" placeholder="Nom du projet" onChange={handleChange} required />
           <input name="field" type="text" placeholder="Domaine" onChange={handleChange} required />
           <input name="sponsorPrice" type="number" placeholder="Prix sponsor (DA)" onChange={handleChange} required />
-          <textarea name="financeSummary" placeholder="Résumé de l’étude financière" onChange={handleChange} required />
+          <textarea name="financeSummary" placeholder="Résumé de l'étude financière" onChange={handleChange} required />
           <textarea name="risks" placeholder="Risques" onChange={handleChange} required />
           <textarea name="description" placeholder="Description" onChange={handleChange} required />
           <input name="team" type="text" placeholder="Créateur / Équipe" onChange={handleChange} required />
-          <input name="image" type="file" accept="image/*" onChange={handleChange}  />
+          <input name="image" type="file" accept="image/*" onChange={handleChange} />
+          
+          {/* Preview of selected image */}
+          {formData.image && (
+            <div className="image-preview">
+              <img src={formData.image} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+            </div>
+          )}
 
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? 'Publication...' : 'Publier'}
