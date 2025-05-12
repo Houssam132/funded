@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import './publishproject.css';
 
-// ✅ Firebase Setup (directly here)
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-vKa2rJkmdc8R8w4NpIKRYr6KKaoPrFk",
   authDomain: "sharetemp-ad298.firebaseapp.com",
   projectId: "sharetemp-ad298",
-  storageBucket: "sharetemp-ad298.firebasestorage.app",
+  storageBucket: "sharetemp-ad298.appspot.com",
   messagingSenderId: "1069248707246",
   appId: "1:1069248707246:web:e8234d9b7508ff4a4fcb3f",
   measurementId: "G-2FM7YBVRER"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const PublishProjectModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -27,13 +28,19 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
     risks: '',
     description: '',
     team: '',
+    image: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === 'image') {
+      setFormData({ ...formData, image: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -42,27 +49,30 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
     setError('');
 
     try {
+      let imageUrl = '';
+
+      if (formData.image instanceof File) {
+        const imageRef = ref(storage, `projectImages/${formData.image.name}`);
+        await uploadBytes(imageRef, formData.image);
+        imageUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.app.options.storageBucket}/o/${encodeURIComponent(imageRef.name)}?alt=media`;
+      }
+
       await addDoc(collection(db, 'Project'), {
-        ...formData,
-        sponsorPrice: parseFloat(formData.sponsorPrice), // optional conversion
-        image: '', // If you want to add image support later
-        documents: [] // Empty array for now, or modify as needed
+        name: formData.name,
+        field: formData.field,
+        sponsorPrice: formData.sponsorPrice,
+        FinanceSummary: formData.financeSummary,
+        risks: formData.risks,
+        description: formData.description,
+        team: formData.team,
+        image: formData.image,
       });
 
-      console.log("✅ Projet publié :", formData);
-      setFormData({
-        name: '',
-        field: '',
-        sponsorPrice: '',
-        financeSummary: '',
-        risks: '',
-        description: '',
-        team: '',
-      });
+      alert('Projet publié avec succès !');
       onClose();
     } catch (err) {
-      console.error("❌ Failed to publish:", err);
-      setError("Erreur lors de la publication du projet.");
+      console.error('Erreur lors de la publication du projet :', err);
+      setError('Erreur lors de la publication du projet.');
     } finally {
       setLoading(false);
     }
@@ -83,6 +93,8 @@ const PublishProjectModal = ({ isOpen, onClose }) => {
           <textarea name="risks" placeholder="Risques" onChange={handleChange} required />
           <textarea name="description" placeholder="Description" onChange={handleChange} required />
           <input name="team" type="text" placeholder="Créateur / Équipe" onChange={handleChange} required />
+          <input name="image" type="file" accept="image/*" onChange={handleChange}  />
+
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? 'Publication...' : 'Publier'}
           </button>

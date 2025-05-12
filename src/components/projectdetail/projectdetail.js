@@ -28,6 +28,10 @@ const ProjectDetailsModal = ({ project, onClose, onInvest }) => {
         isOpen={isFinanceModalOpen}
         onClose={() => setFinanceModalOpen(false)}
         formType="investment"
+        selectedProject={{
+        projectTitle: project.name,    // Pass the project title
+        projectCreator: project.team // Pass the project creator
+  }}
       />
     </div>
   );

@@ -2,28 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ProjectCard from '../../components/projectcard/Projectcard';
 import ProjectDetailsModal from '../../components/projectdetail/projectdetail';
 import './projectpage.css';
-
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics';
-
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyC-vKa2rJkmdc8R8w4NpIKRYr6KKaoPrFk",
-  authDomain: "sharetemp-ad298.firebaseapp.com",
-  projectId: "sharetemp-ad298",
-  storageBucket: "sharetemp-ad298.firebasestorage.app",
-  messagingSenderId: "1069248707246",
-  appId: "1:1069248707246:web:e8234d9b7508ff4a4fcb3f",
-  measurementId: "G-2FM7YBVRER"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-console.log("Firebase initialized");
-console.log("db", db);
-
+import { db } from '../../firebaseconf'
+import { collection, getDocs } from 'firebase/firestore';
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
