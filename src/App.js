@@ -9,7 +9,7 @@ import Adminpage from './Pages/AdminPage.js';
 import ProjectsPage from './Pages/projectpage/projectpage'; // Import the ProjectsPage component
 import React, { useState } from 'react';
 import PublishProjectModal from './components/Projectadminform/PublishProjectModal.js'; // import it
-
+import ZakatPage from './Pages/ZakatPage'; // Import the ZakatPage component
 
 
 function HomePage() {
@@ -47,6 +47,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/zakat" element={<ZakatPage />} />
       </Routes>
     </Router>
   );
